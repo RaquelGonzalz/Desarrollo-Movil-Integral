@@ -1,6 +1,0 @@
-Verificación realizada el 31 de octubre de 2026
-Comando: npx expo export --platform android --output-dir ../qa-android
-Resultado: código de salida 0
-Android Bundled index.js (626 modules)
-Bundle Hermes generado: 1.6 MB
-Esta verificación no representa una instalación ni ejecución en un teléfono.
