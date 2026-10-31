@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {normalizeQuery,buildUrl,parseBooks,createClient} from '../src/library.mjs';
+const fixture={numFound:1,docs:[{key:'/works/OL1W',title:'Libro',author_name:['Autora'],first_publish_year:2001,edition_count:2}]};
+const ok=()=>new Response(JSON.stringify(fixture),{status:200,headers:{'Content-Type':'application/json'}});
+test('valida vacío, longitud, caracteres y normaliza espacios',()=>{assert.equal(normalizeQuery('  García   Márquez '),'García Márquez');for(const q of ['','a','a'.repeat(81),'<script>','title:*'])assert.throws(()=>normalizeQuery(q));});
+test('codifica el parámetro y rechaza modos ajenos',()=>{assert.match(buildUrl('García Márquez','author'),/author=Garc%C3%ADa%20M%C3%A1rquez/);assert.throws(()=>buildUrl('libro','url'));});
+test('procesa campos ausentes y respuesta vacía',()=>{assert.deepEqual(parseBooks({docs:[]}).books,[]);const b=parseBooks({docs:[{key:'/works/OL1W',title:'Sin datos'}]}).books[0];assert.equal(b.authors,'Autor no disponible');assert.equal(b.year,'No disponible');assert.throws(()=>parseBooks({}));});
+test('descarta registros malformados y elimina duplicados',()=>{assert.equal(parseBooks({docs:[null,{},...fixture.docs,...fixture.docs]}).books.length,1);});
+test('GET exitoso y caché evitan una segunda petición',async()=>{let calls=0;const search=createClient({fetcher:async(url,opts)=>{calls++;assert.equal(opts.method,'GET');return ok();}});assert.equal((await search('Libro')).books[0].title,'Libro');assert.equal((await search('Libro')).cached,true);assert.equal(calls,1);});
+test('actualizar salta caché después de la pausa',async()=>{let clock=0,calls=0;const search=createClient({now:()=>clock,fetcher:async()=>{calls++;return ok();}});await search('Libro');clock=1300;await search('Libro','title',true);assert.equal(calls,2);});
+test('bloquea consultas demasiado frecuentes',async()=>{const search=createClient({fetcher:async()=>ok()});await search('Libro');await assert.rejects(search('Otro'),/Espera un momento/);});
+test('respeta HTTP 429 y Retry-After',async()=>{let clock=0,calls=0;const search=createClient({now:()=>clock,fetcher:async()=>{calls++;return new Response('',{status:429,headers:{'Retry-After':'20'}});}});await assert.rejects(search('Libro'),/límite/);clock=1500;await assert.rejects(search('Otro'),/Límite temporal/);assert.equal(calls,1);});
+test('reporta HTTP 503 y JSON inválido',async()=>{await assert.rejects(createClient({fetcher:async()=>new Response('',{status:503})})('Libro'),/503/);await assert.rejects(createClient({fetcher:async()=>new Response('html')})('Libro'),/JSON/);});
+test('reporta pérdida de red y tiempo agotado',async()=>{await assert.rejects(createClient({fetcher:async()=>{throw new TypeError('offline');}})('Libro'),/conexión/);await assert.rejects(createClient({timeoutMs:5,fetcher:async(u,o)=>new Promise((resolve,reject)=>o.signal.addEventListener('abort',()=>reject(Object.assign(new Error(),{name:'AbortError'}))))})('Libro'),/tardó demasiado/);});

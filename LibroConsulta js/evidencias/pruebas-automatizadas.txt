@@ -1,0 +1,18 @@
+✔ valida vacío, longitud, caracteres y normaliza espacios (14.884351ms)
+✔ codifica el parámetro y rechaza modos ajenos (1.524431ms)
+✔ procesa campos ausentes y respuesta vacía (3.465731ms)
+✔ descarta registros malformados y elimina duplicados (0.297195ms)
+✔ GET exitoso y caché evitan una segunda petición (12.293325ms)
+✔ actualizar salta caché después de la pausa (3.400174ms)
+✔ bloquea consultas demasiado frecuentes (0.970712ms)
+✔ respeta HTTP 429 y Retry-After (4.327287ms)
+✔ reporta HTTP 503 y JSON inválido (1.835544ms)
+✔ reporta pérdida de red y tiempo agotado (21.51979ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 566.92654

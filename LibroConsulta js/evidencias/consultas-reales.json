@@ -1,0 +1,32 @@
+[
+  {
+    "modo": "title",
+    "consulta": "Don Quijote",
+    "http": 200,
+    "total": 1550,
+    "recibidos": 12,
+    "archivo": "api-title.json",
+    "url": "https://openlibrary.org/search.json?title=Don+Quijote&limit=12&fields=key%2Ctitle%2Cauthor_name%2Cfirst_publish_year%2Cedition_count",
+    "fecha_utc": "2026-10-31T15:31:30.177197+00:00"
+  },
+  {
+    "modo": "author",
+    "consulta": "Gabriel García Márquez",
+    "http": 200,
+    "total": 498,
+    "recibidos": 12,
+    "archivo": "api-author.json",
+    "url": "https://openlibrary.org/search.json?author=Gabriel+Garc%C3%ADa+M%C3%A1rquez&limit=12&fields=key%2Ctitle%2Cauthor_name%2Cfirst_publish_year%2Cedition_count",
+    "fecha_utc": "2026-10-31T15:31:36.055656+00:00"
+  },
+  {
+    "modo": "title",
+    "consulta": "zzzxqvlibroinexistente987654",
+    "http": 200,
+    "total": 0,
+    "recibidos": 0,
+    "archivo": "api-sin-resultados.json",
+    "url": "https://openlibrary.org/search.json?title=zzzxqvlibroinexistente987654&limit=12&fields=key%2Ctitle%2Cauthor_name%2Cfirst_publish_year%2Cedition_count",
+    "fecha_utc": "2026-10-31T15:31:40.511881+00:00"
+  }
+]
